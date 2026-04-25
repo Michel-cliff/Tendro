@@ -17,8 +17,8 @@ export function FilterBar({ statusFilter, sourceFilter, onStatusChange, onSource
             onClick={() => onStatusChange(s)}
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               statusFilter === s
-                ? "bg-primary-600 text-white"
-                : "bg-white text-gray-600 border border-gray-200 hover:border-primary-300"
+                ? "bg-primary text-primary-foreground"
+                : "bg-background text-muted-foreground border border-border hover:border-primary/40"
             }`}
           >
             {s === "all" ? "Tous" : s === "new" ? "Nouveau" : s === "reviewing" ? "En révision" : s === "submitted" ? "Soumis" : s === "won" ? "Gagné" : "Rejeté"}
@@ -33,7 +33,7 @@ export function FilterBar({ statusFilter, sourceFilter, onStatusChange, onSource
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               sourceFilter === src
                 ? "bg-purple-600 text-white"
-                : "bg-white text-gray-600 border border-gray-200 hover:border-purple-300"
+                : "bg-background text-muted-foreground border border-border hover:border-purple-300"
             }`}
           >
             {src === "all" ? "Toutes sources" : src === "email" ? "Email" : "En ligne"}

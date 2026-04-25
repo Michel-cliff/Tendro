@@ -78,7 +78,7 @@ export default function DocumentsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-800 flex items-center gap-2"><FileText className="w-5 h-5 text-primary-600" /> DC1</h2>
+            <h2 className="font-semibold text-gray-800 flex items-center gap-2"><FileText className="w-5 h-5 text-primary" /> DC1</h2>
             <Button size="sm" onClick={generateDC1} loading={loadingDc1}><Sparkles className="w-3.5 h-3.5" /> Générer</Button>
           </div>
           {dc1 ? (
@@ -86,7 +86,7 @@ export default function DocumentsPage() {
               {(Object.entries(dc1) as [keyof DC1Fields, string][]).map(([key, val]) => (
                 <div key={key} className="flex items-center gap-3">
                   <span className="text-xs text-gray-500 w-32 shrink-0 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-                  <input value={val} onChange={(e) => setDc1({ ...dc1, [key]: e.target.value })} className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                  <input value={val} onChange={(e) => setDc1({ ...dc1, [key]: e.target.value })} className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
                 </div>
               ))}
             </div>

@@ -1,25 +1,25 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Match, Company } from "@/types";
-import { TenderCard } from "@/components/dashboard/TenderCard";
-import { StatsBar } from "@/components/dashboard/StatsBar";
-import { FilterBar } from "@/components/dashboard/FilterBar";
-import { Button } from "@/components/ui/Button";
+import { TenderRow } from "@/components/dashboard/TenderRow";
+import { TopBar } from "@/components/layout/TopBar";
 import { Bot, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
+
+type SortKey = "newest" | "deadline" | "match" | "value";
+type StatusFilter = "all" | "new" | "reviewing" | "submitted" | "rejected";
 
 export default function DashboardPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
-  const [runningAgent, setRunningAgent] = useState(false);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sourceFilter, setSourceFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sort, setSort] = useState<SortKey>("newest");
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
   async function loadData() {
     const { data: { user } } = await supabase.auth.getUser();
@@ -39,68 +39,162 @@ export default function DashboardPage() {
     setLoading(false);
   }
 
-  async function runAgent() {
+  async function handleScan() {
     if (!company) return;
-    setRunningAgent(true);
-    try {
-      const res = await fetch("/api/cron/agent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-cron-secret": process.env.NEXT_PUBLIC_CRON_SECRET ?? "secret" },
-        body: JSON.stringify({ company_id: company.id }),
-      });
-      if (!res.ok) throw new Error("Erreur lors de l'exécution de l'agent");
-      toast.success("Agent exécuté ! Nouveaux appels d'offres chargés.");
-      await loadData();
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setRunningAgent(false);
-    }
+    const res = await fetch("/api/cron/agent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-cron-secret": process.env.NEXT_PUBLIC_CRON_SECRET ?? "secret" },
+      body: JSON.stringify({ company_id: company.id }),
+    });
+    if (!res.ok) throw new Error("Erreur lors de l'analyse");
+    await loadData();
   }
 
-  const filtered = matches.filter((m) => {
-    if (statusFilter !== "all" && m.status !== statusFilter) return false;
-    if (sourceFilter !== "all" && m.source !== sourceFilter) return false;
-    return true;
-  });
+  async function handleStatusChange(matchId: string, status: string) {
+    await supabase.from("matches").update({ status }).eq("id", matchId);
+    setMatches((prev) => prev.map((m) => m.id === matchId ? { ...m, status: status as Match["status"] } : m));
+  }
 
-  const stats = {
-    total: matches.length,
-    newToday: matches.filter((m) => new Date(m.created_at).toDateString() === new Date().toDateString()).length,
-    submitted: matches.filter((m) => m.status === "submitted").length,
-    won: matches.filter((m) => m.status === "won").length,
-  };
+  const filtered = useMemo(() => {
+    let arr = [...matches];
+
+    if (statusFilter !== "all") arr = arr.filter((m) => m.status === statusFilter);
+
+    if (search) {
+      const q = search.toLowerCase();
+      arr = arr.filter((m) => {
+        const t = m.tender;
+        if (!t) return false;
+        return (
+          t.title?.toLowerCase().includes(q) ||
+          t.contracting_authority?.toLowerCase().includes(q) ||
+          t.region?.toLowerCase().includes(q) ||
+          t.sector?.toLowerCase().includes(q)
+        );
+      });
+    }
+
+    switch (sort) {
+      case "deadline":
+        arr.sort((a, b) => {
+          const da = a.tender?.deadline ? new Date(a.tender.deadline).getTime() : Infinity;
+          const db = b.tender?.deadline ? new Date(b.tender.deadline).getTime() : Infinity;
+          return da - db;
+        });
+        break;
+      case "match":
+        arr.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+        break;
+      case "value":
+        arr.sort((a, b) => (b.tender?.budget ?? 0) - (a.tender?.budget ?? 0));
+        break;
+      default:
+        arr.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+
+    return arr;
+  }, [matches, statusFilter, search, sort]);
+
+  const newCount = matches.filter((m) => m.status === "new").length;
+  const hasNotifications = newCount > 0;
+
+  const STATUS_TABS: { key: StatusFilter; label: string }[] = [
+    { key: "all", label: "Tous" },
+    { key: "new", label: "Nouveaux" },
+    { key: "reviewing", label: "En cours" },
+    { key: "submitted", label: "Soumis" },
+    { key: "rejected", label: "Ignorés" },
+  ];
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-          <p className="text-gray-500 mt-1">{company ? `${company.name} · ${company.sector}` : "Chargement..."}</p>
-        </div>
-        <Button onClick={runAgent} loading={runningAgent}>
-          <Bot className="w-4 h-4" /> Lancer l&apos;agent
-        </Button>
-      </div>
+    <div className="flex min-h-screen flex-col">
+      <TopBar
+        search={search}
+        onSearchChange={setSearch}
+        onScan={handleScan}
+        hasNotifications={hasNotifications}
+      />
 
-      <StatsBar stats={stats} />
-      <FilterBar statusFilter={statusFilter} sourceFilter={sourceFilter} onStatusChange={setStatusFilter} onSourceChange={setSourceFilter} />
+      <main className="flex flex-1 flex-col">
+        {/* Inbox header */}
+        <div className="border-b border-border bg-background px-6 pt-6 pb-0">
+          <div className="flex items-center gap-3 pb-4">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              Appels d&apos;offres
+            </h1>
+            {newCount > 0 && (
+              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                {newCount} nouveau{newCount > 1 ? "x" : ""}
+              </span>
+            )}
+          </div>
 
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+          {/* Status tabs */}
+          <div className="flex items-center gap-1 overflow-x-auto">
+            {STATUS_TABS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setStatusFilter(key)}
+                className={cn(
+                  "shrink-0 border-b-2 px-3 pb-3 text-sm font-medium transition-colors",
+                  statusFilter === key
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {label}
+                {key === "new" && newCount > 0 && (
+                  <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    {newCount}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          <Bot className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="font-medium">Aucun appel d&apos;offres trouvé</p>
-          <p className="text-sm mt-1">Lancez l&apos;agent pour découvrir de nouvelles opportunités</p>
+
+        {/* Sort bar */}
+        <div className="flex items-center gap-1 border-b border-border bg-background px-6 py-2">
+          <span className="mr-2 text-xs uppercase tracking-wide text-muted-foreground">Trier</span>
+          {(["newest", "deadline", "match", "value"] as SortKey[]).map((key) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setSort(key)}
+              className={cn(
+                "rounded-md px-2.5 py-1 text-sm transition-colors",
+                sort === key
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {key === "newest" ? "Plus récent" : key === "deadline" ? "Échéance" : key === "match" ? "Compatibilité" : "Valeur"}
+            </button>
+          ))}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
-          {filtered.map((match) => <TenderCard key={match.id} match={match} />)}
+
+        {/* List */}
+        <div className="flex-1 overflow-y-auto bg-background">
+          {loading ? (
+            <div className="flex h-64 items-center justify-center">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="flex h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
+              <Bot className="h-12 w-12 opacity-20" />
+              <p className="text-sm font-medium">Aucun appel d&apos;offres trouvé</p>
+              <p className="text-xs">Lancez un scan pour découvrir de nouvelles opportunités</p>
+            </div>
+          ) : (
+            <ul>
+              {filtered.map((match) => (
+                <TenderRow key={match.id} match={match} onStatusChange={handleStatusChange} />
+              ))}
+            </ul>
+          )}
         </div>
-      )}
+      </main>
     </div>
   );
 }

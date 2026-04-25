@@ -47,7 +47,7 @@ export default function RejectionPage() {
       <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm mb-6">
         <h2 className="font-semibold text-gray-800 mb-4">Document de notation</h2>
         <label className="block cursor-pointer">
-          <div className={cn("border-2 border-dashed rounded-xl p-8 text-center transition-colors", file ? "border-green-400 bg-green-50" : "border-gray-300 hover:border-primary-400 hover:bg-primary-50")}>
+          <div className={cn("border-2 border-dashed rounded-xl p-8 text-center transition-colors", file ? "border-green-400 bg-green-50" : "border-border hover:border-primary hover:bg-primary/5")}>
             {file ? (
               <div className="flex flex-col items-center gap-2"><CheckCircle className="w-10 h-10 text-green-500" /><p className="text-sm font-medium text-green-700">{file.name}</p></div>
             ) : (

@@ -26,7 +26,8 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
-    "tailwind-merge": "^2.3.0"
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/jspdf": "^2.0.0",

@@ -148,8 +148,8 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl overflow-hidden">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
+      <div className="w-full max-w-2xl overflow-hidden rounded-xl border border-border bg-card shadow-card">
         {/* Progress */}
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center gap-2 mb-4">
@@ -160,11 +160,11 @@ export default function OnboardingPage() {
               <div key={i} className="flex items-center gap-2 flex-1">
                 <div className={cn(
                   "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0",
-                  i < step ? "bg-green-500 text-white" : i === step ? "bg-primary-600 text-white" : "bg-gray-200 text-gray-500"
+                  i < step ? "bg-green-500 text-white" : i === step ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                 )}>
                   {i < step ? <CheckCircle className="w-4 h-4" /> : i + 1}
                 </div>
-                <span className={cn("text-xs hidden sm:block", i === step ? "text-primary-600 font-medium" : "text-gray-400")}>
+                <span className={cn("text-xs hidden sm:block", i === step ? "text-primary font-medium" : "text-muted-foreground")}>
                   {s}
                 </span>
                 {i < STEPS.length - 1 && <div className="flex-1 h-px bg-gray-200" />}
@@ -278,7 +278,7 @@ function FileUploadZone({ accept, onFile, current, label }: {
     <label className="block cursor-pointer">
       <div className={cn(
         "border-2 border-dashed rounded-xl p-8 text-center transition-colors",
-        current ? "border-green-400 bg-green-50" : "border-gray-300 hover:border-primary-400 hover:bg-primary-50"
+        current ? "border-green-400 bg-green-50" : "border-border hover:border-primary hover:bg-primary/5"
       )}>
         {current ? (
           <div className="flex flex-col items-center gap-2">

@@ -100,13 +100,13 @@ export default function TenderDetailPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {[
-          { href: "pricing", icon: <Calculator className="w-6 h-6 text-primary-600" />, label: "Estimer le prix", sub: "Calculer votre offre" },
+          { href: "pricing", icon: <Calculator className="w-6 h-6 text-primary" />, label: "Estimer le prix", sub: "Calculer votre offre" },
           { href: "documents", icon: <FileText className="w-6 h-6 text-green-600" />, label: "Générer les docs", sub: "DC1 + Mémoire technique" },
           { href: "send", icon: <Send className="w-6 h-6 text-blue-600" />, label: "Envoyer", sub: "Email + pièces jointes" },
           { href: "rejection", icon: <AlertTriangle className="w-6 h-6 text-red-500" />, label: "Analyser le rejet", sub: "Plan d'amélioration" },
         ].map((a) => (
           <Link key={a.href} href={`/dashboard/tenders/${tenderId}/${a.href}`}>
-            <div className="bg-white border border-gray-200 rounded-xl p-4 hover:border-primary-300 hover:shadow-sm transition-all cursor-pointer">
+            <div className="rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer">
               {a.icon}
               <p className="text-sm font-semibold text-gray-800 mt-2">{a.label}</p>
               <p className="text-xs text-gray-400 mt-0.5">{a.sub}</p>

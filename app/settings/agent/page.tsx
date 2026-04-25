@@ -65,7 +65,7 @@ export default function AgentSettingsPage() {
   return (
     <div className="p-8 max-w-2xl">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center"><Bot className="w-5 h-5 text-primary-600" /></div>
+        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center"><Bot className="w-5 h-5 text-primary" /></div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Configuration de l&apos;agent IA</h1>
           <p className="text-gray-500 text-sm">Surveillance automatique des appels d&apos;offres</p>
@@ -78,7 +78,7 @@ export default function AgentSettingsPage() {
             <div className={`w-3 h-3 rounded-full ${config.active ? "bg-green-500 animate-pulse" : "bg-gray-300"}`} />
             <span className="font-medium text-gray-800">Agent {config.active ? "actif" : "inactif"}</span>
           </div>
-          <button onClick={() => setConfig({ ...config, active: !config.active })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.active ? "bg-primary-600" : "bg-gray-200"}`}>
+          <button onClick={() => setConfig({ ...config, active: !config.active })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.active ? "bg-primary" : "bg-muted"}`}>
             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.active ? "translate-x-6" : "translate-x-1"}`} />
           </button>
         </div>

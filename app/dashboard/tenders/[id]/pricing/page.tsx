@@ -67,7 +67,7 @@ export default function PricingPage() {
               <span className="text-sm font-bold">{result.confidence}/100</span>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-2">
-              <div className="bg-primary-600 h-2 rounded-full" style={{ width: `${result.confidence}%` }} />
+              <div className="bg-primary h-2 rounded-full" style={{ width: `${result.confidence}%` }} />
             </div>
           </div>
           <div className="bg-blue-50 rounded-xl border border-blue-100 p-5">
