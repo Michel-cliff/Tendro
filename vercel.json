@@ -1,4 +1,7 @@
 {
+  "framework": "nextjs",
+  "buildCommand": "npx rimraf next.config.ts && npm run build",
+  "installCommand": "npm install",
   "crons": [
     {
       "path": "/api/cron/agent",
