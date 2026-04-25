@@ -51,7 +51,7 @@ export default function AgentSettingsPage() {
     try {
       const res = await fetch("/api/cron/agent", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-cron-secret": "secret" },
+        headers: { "Content-Type": "application/json", "x-cron-secret": process.env.NEXT_PUBLIC_CRON_SECRET ?? "" },
         body: JSON.stringify({ company_id: companyId }),
       });
       if (!res.ok) throw new Error("Erreur d'exécution");
