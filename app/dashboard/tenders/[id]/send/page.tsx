@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Tender } from "@/types";
@@ -27,10 +28,18 @@ export default function SendPage() {
     });
   }, [tenderId]);
 
+  async function getAuthHeaders() {
+    const { data: { session } } = await supabase.auth.getSession();
+    return {
+      "Content-Type": "application/json",
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+    };
+  }
+
   async function generateEmail() {
     setGenerating(true);
     try {
-      const res = await fetch("/api/email/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tender_id: tenderId }) });
+      const res = await fetch("/api/email/generate", { method: "POST", headers: await getAuthHeaders(), body: JSON.stringify({ tender_id: tenderId }) });
       if (!res.ok) throw new Error("Erreur de génération");
       const data = await res.json();
       setSubject(data.subject);
@@ -43,7 +52,7 @@ export default function SendPage() {
     if (!to || !subject || !body) { toast.error("Remplissez tous les champs"); return; }
     setLoading(true);
     try {
-      const res = await fetch("/api/email/send", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tender_id: tenderId, to, subject, body }) });
+      const res = await fetch("/api/email/send", { method: "POST", headers: await getAuthHeaders(), body: JSON.stringify({ tender_id: tenderId, to, subject, body }) });
       if (!res.ok) throw new Error("Erreur d'envoi");
       setSent(true);
       toast.success("Email envoyé avec les pièces jointes !");

@@ -3,12 +3,16 @@ import { Archive, Ban, Bookmark, Undo2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Match } from "@/types";
 import { formatCurrency, formatDate, daysUntil } from "@/lib/utils";
-import Link from "next/link";
 
-export function TenderRow({ match, onStatusChange }: {
+interface TenderRowProps {
   match: Match;
+  selected?: boolean;
+  onSelectChange?: (checked: boolean) => void;
+  onOpen?: () => void;
   onStatusChange?: (matchId: string, status: string) => void;
-}) {
+}
+
+export function TenderRow({ match, selected, onSelectChange, onOpen, onStatusChange }: TenderRowProps) {
   const tender = match.tender;
   if (!tender) return null;
 
@@ -16,22 +20,44 @@ export function TenderRow({ match, onStatusChange }: {
   const isUrgent = days !== null && days <= 7;
   const isSoon = days !== null && days > 7 && days <= 14;
   const muted = match.status === "rejected";
+  const isSelectable = !!onSelectChange;
 
   return (
     <li className={cn(
       "group relative flex items-center gap-3 border-b border-border bg-card px-4 py-3 transition-colors",
       muted ? "text-muted-foreground hover:bg-muted/40" : "hover:bg-muted/50",
+      selected && "bg-primary/5",
     )}>
-      {/* Unread dot */}
-      <div className="flex w-2 justify-center shrink-0">
-        {match.status === "new" && (
-          <span className="h-2 w-2 rounded-full bg-primary" aria-label="Nouveau" />
+      {/* Checkbox (visible on hover or when any item is selected) */}
+      <div className="flex w-6 shrink-0 items-center justify-center">
+        {isSelectable ? (
+          <input
+            type="checkbox"
+            checked={!!selected}
+            onChange={(e) => onSelectChange(e.target.checked)}
+            onClick={(e) => e.stopPropagation()}
+            className={cn(
+              "h-4 w-4 rounded border-border accent-primary transition-opacity",
+              selected ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+            )}
+          />
+        ) : (
+          /* Unread dot when no selection mode */
+          match.status === "new" && (
+            <span className="h-2 w-2 rounded-full bg-primary" aria-label="Nouveau" />
+          )
         )}
       </div>
 
-      {/* Clickable content */}
-      <Link
-        href={`/dashboard/tenders/${tender.id}`}
+      {/* Unread dot when selection mode is on */}
+      {isSelectable && match.status === "new" && (
+        <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
+      )}
+
+      {/* Clickable content area */}
+      <button
+        type="button"
+        onClick={onOpen}
         className="flex flex-1 items-center gap-4 text-left min-w-0"
       >
         <div className="min-w-0 flex-1">
@@ -72,7 +98,7 @@ export function TenderRow({ match, onStatusChange }: {
             </span>
           )}
         </div>
-      </Link>
+      </button>
 
       {/* Hover actions */}
       <div className="absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md border border-border bg-background p-1 shadow-card group-hover:flex">

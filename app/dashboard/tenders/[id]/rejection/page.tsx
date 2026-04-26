@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Tender } from "@/types";
@@ -27,10 +28,13 @@ export default function RejectionPage() {
     if (!file) { toast.error("Importez d'abord le document de rejet"); return; }
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const formData = new FormData();
       formData.append("file", file);
       formData.append("tender_id", tenderId);
-      const res = await fetch("/api/rejection/analyze", { method: "POST", body: formData });
+      const headers: Record<string, string> = {};
+      if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
+      const res = await fetch("/api/rejection/analyze", { method: "POST", headers, body: formData });
       if (!res.ok) throw new Error("Erreur d'analyse");
       setResult(await res.json());
       toast.success("Analyse terminée !");

@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Tender } from "@/types";
@@ -33,10 +34,18 @@ export default function DocumentsPage() {
     supabase.from("tenders").select("*").eq("id", tenderId).single().then(({ data }) => setTender(data));
   }, [tenderId]);
 
+  async function getAuthHeaders() {
+    const { data: { session } } = await supabase.auth.getSession();
+    return {
+      "Content-Type": "application/json",
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+    };
+  }
+
   async function generateDC1() {
     setLoadingDc1(true);
     try {
-      const res = await fetch("/api/documents/dc1", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tender_id: tenderId }) });
+      const res = await fetch("/api/documents/dc1", { method: "POST", headers: await getAuthHeaders(), body: JSON.stringify({ tender_id: tenderId }) });
       if (!res.ok) throw new Error("Erreur de génération DC1");
       setDc1(await res.json());
       toast.success("DC1 pré-rempli !");
@@ -46,7 +55,7 @@ export default function DocumentsPage() {
   async function generateMemoire() {
     setLoadingMemoire(true);
     try {
-      const res = await fetch("/api/documents/memoire", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tender_id: tenderId }) });
+      const res = await fetch("/api/documents/memoire", { method: "POST", headers: await getAuthHeaders(), body: JSON.stringify({ tender_id: tenderId }) });
       if (!res.ok) throw new Error("Erreur de génération mémoire");
       const data = await res.json();
       editor?.commands.setContent(data.content);
@@ -59,7 +68,7 @@ export default function DocumentsPage() {
     try {
       const res = await fetch("/api/documents/generate-pdf", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({ tender_id: tenderId, dc1_fields: dc1, memoire_content: editor?.getText() ?? "" }),
       });
       if (!res.ok) throw new Error("Erreur de génération PDF");

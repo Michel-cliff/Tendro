@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Tender } from "@/types";
@@ -27,9 +28,12 @@ export default function PricingPage() {
   async function calculate() {
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
       const res = await fetch("/api/pricing", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ tender_id: tenderId, labor: parseFloat(costs.labor) || 0, materials: parseFloat(costs.materials) || 0, overhead: parseFloat(costs.overhead) || 0, margin: parseFloat(costs.margin) || 15 }),
       });
       if (!res.ok) throw new Error("Erreur de calcul");
