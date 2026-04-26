@@ -1,5 +1,15 @@
 # Déploiement
 
+## Accès demo
+
+| | |
+|---|---|
+| **URL** | [https://tendro-seven.vercel.app/](https://tendro-seven.vercel.app/) |
+| **Email** | `trendofintech@gmail.com` |
+| **Mot de passe** | `Fintech123` |
+
+---
+
 ## Variables d'environnement
 
 ### Obligatoires

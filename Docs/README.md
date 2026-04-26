@@ -2,6 +2,19 @@
 
 Bienvenue dans la documentation technique de **Tendro**, une plateforme SaaS d'aide à la réponse aux appels d'offres publics français.
 
+---
+
+## Accès demo
+
+> **Site web** → [https://tendro-seven.vercel.app/](https://tendro-seven.vercel.app/)
+
+| Champ | Valeur |
+|---|---|
+| **Email** | `trendofintech@gmail.com` |
+| **Mot de passe** | `Fintech123` |
+
+---
+
 ## Index
 
 | Document | Contenu |

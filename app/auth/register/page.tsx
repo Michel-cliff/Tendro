@@ -34,7 +34,7 @@ export default function RegisterPage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
             <span className="text-lg font-bold text-primary-foreground">B</span>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">BidSafe</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Tendro</h1>
           <p className="mt-1 text-sm text-muted-foreground">Gérez vos appels d&apos;offres avec l&apos;IA</p>
         </div>
 

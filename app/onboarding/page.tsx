@@ -249,7 +249,7 @@ export default function OnboardingPage() {
       <div className="border-b border-border bg-card px-6 py-4">
         <div className="mx-auto max-w-3xl">
           <div className="mb-4 flex items-center justify-between">
-            <span className="text-lg font-semibold tracking-tight text-primary">BidSafe</span>
+            <span className="text-lg font-semibold tracking-tight text-primary">Tendro</span>
             <span className="text-sm text-muted-foreground">Étape {step + 1} sur {STEPS.length}</span>
           </div>
           {/* Progress dots */}
