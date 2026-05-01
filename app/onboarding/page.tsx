@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -154,30 +154,6 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(true);
-
-  useEffect(() => {
-    async function guard() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.replace("/auth/login"); return; }
-      const { data: company } = await supabase
-        .from("companies")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      if (company) { router.replace("/dashboard"); return; }
-      setChecking(false);
-    }
-    guard();
-  }, [router]);
-
-  if (checking) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
-  }
   const [form, setForm] = useState<FormData>({
     name: "", siret: "", address: "", sector: "", region: "",
     legal_representative: "", representative_title: "",

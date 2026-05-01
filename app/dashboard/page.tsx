@@ -1,5 +1,2 @@
 import { redirect } from "next/navigation";
-
-export default function DashboardPage() {
-  redirect("/dashboard/matched");
-}
+export default function DashboardPage() { redirect("/dashboard/my-tenders"); }

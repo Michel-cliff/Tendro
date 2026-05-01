@@ -69,7 +69,6 @@ type AuthorityProfile = {
   tendroInsight: string;
 };
 
-type Tab = "analyse" | "profiles";
 type SubToggle = "individual" | "dashboard";
 type Range = "3M" | "6M" | "12M";
 
@@ -327,33 +326,15 @@ const RANGE_MONTHS: Record<Range, number> = { "3M": 3, "6M": 6, "12M": 12 };
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function RejectionAnalysisPage() {
-  const [tab, setTab] = useState<Tab>("analyse");
-
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="border-b border-border bg-background px-6 pt-6 pb-0">
-        <h1 className="mb-4 text-2xl font-semibold tracking-tight" style={{ color: NAVY }}>
+      <div className="border-b border-border bg-background px-6 pt-6 pb-4">
+        <h1 className="text-2xl font-semibold tracking-tight" style={{ color: NAVY }}>
           Analyse des rejets
         </h1>
-        <div className="flex gap-1">
-          {(["analyse", "profiles"] as Tab[]).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={cn(
-                "border-b-2 px-4 pb-3 text-sm font-medium transition-colors",
-                tab === t ? "border-[#0A1F44] text-[#0A1F44]" : "border-transparent text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {t === "analyse" ? "Mon Analyse" : "Profils d'autorités"}
-            </button>
-          ))}
-        </div>
       </div>
-
       <main className="flex-1 overflow-y-auto bg-background px-6 py-6">
-        {tab === "analyse" ? <MyAnalysisTab /> : <AuthorityProfilesTab />}
+        <MyAnalysisTab />
       </main>
     </div>
   );

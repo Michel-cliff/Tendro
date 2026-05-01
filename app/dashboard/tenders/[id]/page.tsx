@@ -2,13 +2,14 @@
 export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { ensureDemoSession } from "@/lib/demo-auth";
 import { Tender, Match } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Badge, StatusBadge, SourceBadge, ScoreBadge } from "@/components/ui/Badge";
 import { formatCurrency, formatDate, daysUntil } from "@/lib/utils";
 import { ArrowLeft, Clock, Euro, Building2, FileText, Calculator, Send, AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 export default function TenderDetailPage() {
@@ -24,7 +25,7 @@ export default function TenderDetailPage() {
   async function loadData() {
     const { data: t } = await supabase.from("tenders").select("*").eq("id", tenderId).single();
     setTender(t);
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await ensureDemoSession();
     if (user) {
       const { data: co } = await supabase.from("companies").select("id").eq("user_id", user.id).single();
       if (co) {

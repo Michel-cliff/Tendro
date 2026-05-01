@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { ensureDemoSession } from "@/lib/demo-auth";
 import { Match, Company } from "@/types";
 import { TenderRow } from "@/components/dashboard/TenderRow";
 import { TenderDetailDrawer } from "@/components/dashboard/TenderDetailDrawer";
@@ -71,11 +72,11 @@ export default function FolderPage() {
 
   async function loadData() {
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { window.location.href = "/auth/login"; return; }
+    const user = await ensureDemoSession();
+    if (!user) { setLoading(false); return; }
 
     const { data: co } = await supabase.from("companies").select("*").eq("user_id", user.id).single();
-    if (!co) { window.location.href = "/onboarding"; return; }
+    if (!co) { setLoading(false); return; }
     setCompany(co);
 
     const { data: m } = await supabase

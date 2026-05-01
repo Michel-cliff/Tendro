@@ -27,6 +27,13 @@ const T = {
   scan_success:     { fr: "Analyse terminée. Nouveaux résultats disponibles.", en: "Scan complete. New results available." },
   scan_error:       { fr: "Erreur lors de l'analyse", en: "Error during scan" },
 
+  // Sidebar nav — new structure
+  nav_search:         { fr: "Search Tenders",       en: "Search Tenders" },
+  nav_my_tenders:     { fr: "My Tenders",           en: "My Tenders" },
+  nav_authority:      { fr: "Authority Profiles",   en: "Authority Profiles" },
+  section_tenders:    { fr: "Tenders",              en: "Tenders" },
+  section_analytics:  { fr: "Analytics & Insights", en: "Analytics & Insights" },
+
   // Help panel
   help_panel_title: { fr: "Guide Tendro",        en: "Tendro Guide" },
   help_s1_title:    { fr: "Dashboard",           en: "Dashboard" },
