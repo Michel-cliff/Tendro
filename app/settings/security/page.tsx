@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 
 const NAVY = "#0A1F44";
 const N05 = "rgba(10,31,68,.05)";
+const CARD: React.CSSProperties = { boxShadow: "0 2px 8px rgba(0,0,0,0.06)" };
 
 function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -13,12 +14,12 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
       role="switch"
       aria-checked={on}
       onClick={() => onChange(!on)}
-      className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
+      className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
       style={{ backgroundColor: on ? NAVY : "#D1D5DB" }}
     >
       <span
-        className="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200"
-        style={{ transform: on ? "translateX(16px)" : "translateX(0)" }}
+        className="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200"
+        style={{ transform: on ? "translateX(20px)" : "translateX(0)" }}
       />
     </button>
   );
@@ -32,7 +33,6 @@ export default function SecurityPage() {
   const [showNew,  setShowNew]  = useState(false);
   const [showConf, setShowConf] = useState(false);
   const [mfa,      setMfa]      = useState(false);
-  const [sessions, setSessions] = useState(true);
 
   function strength(pw: string): { label: string; color: string; width: string } {
     if (!pw) return { label: "", color: "bg-muted", width: "0%" };
@@ -53,9 +53,9 @@ export default function SecurityPage() {
   const pw = strength(newPw);
 
   const SESSIONS_DATA = [
-    { id: "1", device: "Chrome on macOS",  location: "Lyon, France",   last: "Now",            current: true  },
-    { id: "2", device: "Safari on iPhone", location: "Lyon, France",   last: "2 hours ago",    current: false },
-    { id: "3", device: "Chrome on Windows",location: "Paris, France",  last: "3 days ago",     current: false },
+    { id: "1", device: "Chrome on macOS",   location: "Lyon, France",  last: "Now",         current: true  },
+    { id: "2", device: "Safari on iPhone",  location: "Lyon, France",  last: "2 hours ago", current: false },
+    { id: "3", device: "Chrome on Windows", location: "Paris, France", last: "3 days ago",  current: false },
   ];
 
   function pwInput(
@@ -74,7 +74,7 @@ export default function SecurityPage() {
             type={show ? "text" : "password"}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="h-10 w-full rounded-md border border-input bg-background px-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#0A1F44]/30"
+            className="h-10 w-full rounded-md border border-[#E5E7EB] bg-background px-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#0A1F44]/30"
           />
           <button
             type="button"
@@ -92,20 +92,22 @@ export default function SecurityPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="border-b border-border bg-background px-6 pt-6 pb-5">
+      <div className="border-b border-[#E5E7EB] bg-white px-6 pt-6 pb-5">
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Security</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage your password, two-factor authentication, and active sessions</p>
+        <p className="mt-1 text-[13px] text-muted-foreground">Manage your password, two-factor authentication, and active sessions</p>
       </div>
 
-      <main className="flex-1 px-6 py-6">
+      <main className="flex-1 bg-[#F9FAFB] px-6 py-6">
         <div className="max-w-2xl space-y-6">
 
           {/* Change password */}
-          <section className="rounded-xl border border-border bg-card p-5">
-            <div className="mb-4 flex items-center gap-2">
+          <section className="rounded-xl border border-[#E5E7EB] bg-white p-6" style={CARD}>
+            <div className="flex items-center gap-2">
               <KeyRound className="h-4 w-4" style={{ color: NAVY }} />
-              <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Change Password</h2>
+              <h2 className="text-base font-bold" style={{ color: NAVY }}>Change Password</h2>
             </div>
+            <p className="mt-0.5 text-[13px] text-muted-foreground">Update your account password regularly to keep it secure</p>
+            <hr className="my-4 border-[#E5E7EB]" />
             <div className="space-y-4">
               {pwInput("Current password", current, setCurrent, showCurr, () => setShowCurr((v) => !v))}
               {pwInput(
@@ -127,7 +129,7 @@ export default function SecurityPage() {
             </div>
             <div className="mt-5 flex justify-end">
               <button type="button" onClick={handleSave}
-                className="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 style={{ backgroundColor: NAVY }}>
                 <Save className="h-4 w-4" />
                 Update password
@@ -136,11 +138,13 @@ export default function SecurityPage() {
           </section>
 
           {/* Two-factor auth */}
-          <section className="rounded-xl border border-border bg-card p-5">
-            <div className="mb-4 flex items-center gap-2">
+          <section className="rounded-xl border border-[#E5E7EB] bg-white p-6" style={CARD}>
+            <div className="flex items-center gap-2">
               <Smartphone className="h-4 w-4" style={{ color: NAVY }} />
-              <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Two-Factor Authentication</h2>
+              <h2 className="text-base font-bold" style={{ color: NAVY }}>Two-Factor Authentication</h2>
             </div>
+            <p className="mt-0.5 text-[13px] text-muted-foreground">Add an extra layer of protection to your account</p>
+            <hr className="my-4 border-[#E5E7EB]" />
             <div className="flex items-start justify-between gap-4 rounded-lg p-4" style={{ backgroundColor: N05 }}>
               <div>
                 <p className="text-sm font-medium text-foreground">Authenticator app</p>
@@ -152,11 +156,11 @@ export default function SecurityPage() {
           </section>
 
           {/* Active sessions */}
-          <section className="rounded-xl border border-border bg-card p-5">
-            <div className="mb-4 flex items-center justify-between">
+          <section className="rounded-xl border border-[#E5E7EB] bg-white p-6" style={CARD}>
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Shield className="h-4 w-4" style={{ color: NAVY }} />
-                <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Active Sessions</h2>
+                <h2 className="text-base font-bold" style={{ color: NAVY }}>Active Sessions</h2>
               </div>
               <button type="button"
                 onClick={() => { toast("All other sessions signed out."); }}
@@ -164,7 +168,9 @@ export default function SecurityPage() {
                 Sign out all others
               </button>
             </div>
-            <div className="divide-y divide-border">
+            <p className="mt-0.5 text-[13px] text-muted-foreground">Devices currently signed in to your account</p>
+            <hr className="my-4 border-[#E5E7EB]" />
+            <div className="divide-y divide-[#F3F4F6]">
               {SESSIONS_DATA.map((s) => (
                 <div key={s.id} className="flex items-center justify-between py-3">
                   <div>

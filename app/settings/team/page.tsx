@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 
 const NAVY = "#0A1F44";
 const N05 = "rgba(10,31,68,.05)";
+const CARD: React.CSSProperties = { boxShadow: "0 2px 8px rgba(0,0,0,0.06)" };
 
 type Member = {
   id: string;
@@ -16,10 +17,10 @@ type Member = {
 };
 
 const INITIAL_MEMBERS: Member[] = [
-  { id: "1", name: "Nathalie Cordier",  email: "nathalie@altea-ingenierie.fr", role: "Owner",  status: "Active",  avatar: "NC" },
-  { id: "2", name: "Thomas Grégoire",   email: "thomas@altea-ingenierie.fr",   role: "Admin",  status: "Active",  avatar: "TG" },
-  { id: "3", name: "Léa Martineau",     email: "lea@altea-ingenierie.fr",      role: "Member", status: "Active",  avatar: "LM" },
-  { id: "4", name: "Invited User",      email: "invite@partner.fr",            role: "Member", status: "Pending", avatar: "IU" },
+  { id: "1", name: "Nathalie Cordier", email: "nathalie@altea-ingenierie.fr", role: "Owner",  status: "Active",  avatar: "NC" },
+  { id: "2", name: "Thomas Grégoire",  email: "thomas@altea-ingenierie.fr",   role: "Admin",  status: "Active",  avatar: "TG" },
+  { id: "3", name: "Léa Martineau",    email: "lea@altea-ingenierie.fr",      role: "Member", status: "Active",  avatar: "LM" },
+  { id: "4", name: "Invited User",     email: "invite@partner.fr",            role: "Member", status: "Pending", avatar: "IU" },
 ];
 
 const ROLE_COLORS: Record<Member["role"], string> = {
@@ -53,12 +54,12 @@ export default function TeamPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="border-b border-border bg-background px-6 pt-6 pb-5">
+      <div className="border-b border-[#E5E7EB] bg-white px-6 pt-6 pb-5">
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: NAVY }}>Team Members</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage who has access to your Tendro workspace</p>
+        <p className="mt-1 text-[13px] text-muted-foreground">Manage who has access to your Tendro workspace</p>
       </div>
 
-      <main className="flex-1 px-6 py-6">
+      <main className="flex-1 bg-[#F9FAFB] px-6 py-6">
         <div className="max-w-2xl space-y-6">
 
           {/* Pro gate banner */}
@@ -72,9 +73,11 @@ export default function TeamPage() {
           </div>
 
           {/* Members list */}
-          <section className="rounded-xl border border-border bg-card p-5">
-            <h2 className="mb-4 text-sm font-semibold" style={{ color: NAVY }}>Current Members</h2>
-            <div className="divide-y divide-border">
+          <section className="rounded-xl border border-[#E5E7EB] bg-white p-6" style={CARD}>
+            <h2 className="text-base font-bold" style={{ color: NAVY }}>Current Members</h2>
+            <p className="mt-0.5 text-[13px] text-muted-foreground">People with access to this workspace</p>
+            <hr className="my-4 border-[#E5E7EB]" />
+            <div className="divide-y divide-[#F3F4F6]">
               {members.map((m) => (
                 <div key={m.id} className="flex items-center gap-3 py-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white" style={{ backgroundColor: NAVY }}>
@@ -99,7 +102,7 @@ export default function TeamPage() {
                           <MoreHorizontal className="h-4 w-4" />
                         </button>
                         {openMenu === m.id && (
-                          <div className="absolute right-0 top-full z-10 mt-1 w-36 rounded-lg border border-border bg-card shadow-md">
+                          <div className="absolute right-0 top-full z-10 mt-1 w-36 rounded-lg border border-[#E5E7EB] bg-white shadow-md">
                             <button
                               type="button"
                               onClick={() => handleRemove(m.id)}
@@ -119,8 +122,10 @@ export default function TeamPage() {
           </section>
 
           {/* Invite */}
-          <section className="rounded-xl border border-border bg-card p-5">
-            <h2 className="mb-4 text-sm font-semibold" style={{ color: NAVY }}>Invite a Member</h2>
+          <section className="rounded-xl border border-[#E5E7EB] bg-white p-6" style={CARD}>
+            <h2 className="text-base font-bold" style={{ color: NAVY }}>Invite a Member</h2>
+            <p className="mt-0.5 text-[13px] text-muted-foreground">They will receive an email invitation to join your workspace</p>
+            <hr className="my-4 border-[#E5E7EB]" />
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -130,13 +135,13 @@ export default function TeamPage() {
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleInvite()}
-                  className="h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0A1F44]/30"
+                  className="h-10 w-full rounded-md border border-[#E5E7EB] bg-background pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0A1F44]/30"
                 />
               </div>
               <select
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value as "Admin" | "Member")}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0A1F44]/30"
+                className="h-10 rounded-md border border-[#E5E7EB] bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0A1F44]/30"
               >
                 <option value="Member">Member</option>
                 <option value="Admin">Admin</option>
@@ -151,7 +156,6 @@ export default function TeamPage() {
                 Invite
               </button>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">They will receive an email invitation to join your workspace.</p>
           </section>
 
         </div>

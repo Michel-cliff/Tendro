@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Building2, Search, X, Lightbulb, ExternalLink } from "lucide-react";
+import { Building2, Search, X, Lightbulb, ExternalLink, FileText, Users, Calendar, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAVY = "#0A1F44";
@@ -12,6 +12,7 @@ const N10  = "rgba(10,31,68,.10)";
 type AuthorityProfile = {
   id: string; name: string; type: string; region: string; sector: string;
   lettersAnalysed: number; companiesReviewed: number; activeSince: string;
+  openTenders: number;
   ratesHigh: string[]; ratesLow: string[];
   commonRejectionReasons: { reason: string; frequency: number }[];
   tendroInsight: string;
@@ -20,7 +21,7 @@ type AuthorityProfile = {
 const AUTHORITY_PROFILES: AuthorityProfile[] = [
   {
     id: "1", name: "Mairie de Paris", type: "Commune", region: "Île-de-France", sector: "Services généraux",
-    lettersAnalysed: 42, companiesReviewed: 130, activeSince: "2019",
+    lettersAnalysed: 42, companiesReviewed: 130, activeSince: "2019", openTenders: 6,
     ratesHigh: ["Innovation", "Développement durable", "Références locales"],
     ratesLow: ["Prix uniquement", "Dossiers génériques"],
     commonRejectionReasons: [
@@ -34,7 +35,7 @@ const AUTHORITY_PROFILES: AuthorityProfile[] = [
   },
   {
     id: "2", name: "Région Île-de-France", type: "Région", region: "Île-de-France", sector: "IT & Numérique",
-    lettersAnalysed: 28, companiesReviewed: 85, activeSince: "2020",
+    lettersAnalysed: 28, companiesReviewed: 85, activeSince: "2020", openTenders: 3,
     ratesHigh: ["Expertise technique", "Agilité", "Certifications"],
     ratesLow: ["Offres trop génériques", "Absence de référent dédié"],
     commonRejectionReasons: [
@@ -48,7 +49,7 @@ const AUTHORITY_PROFILES: AuthorityProfile[] = [
   },
   {
     id: "3", name: "CHU de Bordeaux", type: "Établissement public", region: "Nouvelle-Aquitaine", sector: "Santé",
-    lettersAnalysed: 19, companiesReviewed: 60, activeSince: "2021",
+    lettersAnalysed: 19, companiesReviewed: 60, activeSince: "2021", openTenders: 2,
     ratesHigh: ["Sécurité des données", "Conformité RGPD", "Support 24/7"],
     ratesLow: ["Manque de spécialisation santé", "Absence de SLA"],
     commonRejectionReasons: [
@@ -62,7 +63,7 @@ const AUTHORITY_PROFILES: AuthorityProfile[] = [
   },
   {
     id: "4", name: "Département de la Gironde", type: "Département", region: "Nouvelle-Aquitaine", sector: "Services généraux",
-    lettersAnalysed: 15, companiesReviewed: 45, activeSince: "2022",
+    lettersAnalysed: 15, companiesReviewed: 45, activeSince: "2022", openTenders: 4,
     ratesHigh: ["Ancrage local", "Insertion professionnelle", "Développement durable"],
     ratesLow: ["Entreprises hors région", "Offres standardisées"],
     commonRejectionReasons: [
@@ -90,26 +91,53 @@ function AuthorityProfileDrawer({ authority, open, onClose }: {
       )}>
         {authority && (
           <div className="flex h-full flex-col overflow-y-auto">
-            <div className="flex items-start gap-4 border-b border-border p-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white" style={{ backgroundColor: NAVY }}>
-                {authority.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
-              </div>
-              <div className="min-w-0 flex-1">
-                <h2 className="text-xl font-bold leading-tight" style={{ color: NAVY }}>{authority.name}</h2>
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  <span className="rounded-full border px-2 py-0.5 text-[11px] font-medium" style={{ borderColor: `${NAVY}30`, backgroundColor: N05, color: NAVY }}>{authority.type}</span>
-                  <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">{authority.region}</span>
+            {/* Header */}
+            <div className="border-b border-border p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white" style={{ backgroundColor: NAVY }}>
+                  {authority.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                 </div>
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-border pt-3 text-xs text-muted-foreground">
-                  <span><span className="font-semibold text-foreground">{authority.lettersAnalysed}</span> lettres analysées</span>
-                  <span><span className="font-semibold text-foreground">{authority.companiesReviewed}</span> entreprises examinées</span>
-                  <span>Actif depuis <span className="font-semibold text-foreground">{authority.activeSince}</span></span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-xl font-bold leading-tight" style={{ color: NAVY }}>{authority.name}</h2>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    <span className="rounded-full border px-2 py-0.5 text-[11px] font-medium" style={{ borderColor: `${NAVY}30`, backgroundColor: N05, color: NAVY }}>{authority.type}</span>
+                    <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">{authority.region}</span>
+                  </div>
                 </div>
+                <button type="button" onClick={onClose} className="rounded-md p-1.5 text-muted-foreground hover:bg-muted transition-colors">
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              <button type="button" onClick={onClose} className="rounded-md p-1.5 text-muted-foreground hover:bg-muted transition-colors">
-                <X className="h-5 w-5" />
-              </button>
+
+              {/* Stat blocks row */}
+              <div className="mt-4 flex divide-x divide-border border-t border-border">
+                {[
+                  { value: authority.lettersAnalysed,       label: "Letters Analysed",   link: false },
+                  { value: authority.companiesReviewed,     label: "Companies Reviewed", link: false },
+                  { value: `Since ${authority.activeSince}`, label: "Active in Tendro",  link: false },
+                  { value: authority.openTenders,           label: "Open Tenders",       link: true  },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="flex-1 px-4 pt-3 pb-2 text-center first:pl-0 last:pr-0"
+                    style={{ borderTop: `3px solid ${NAVY}` }}
+                  >
+                    <p className="text-2xl font-bold leading-none tabular-nums" style={{ color: NAVY }}>{stat.value}</p>
+                    <p className="mt-1 text-[12px] text-muted-foreground">{stat.label}</p>
+                    {stat.link && (
+                      <a
+                        href="/dashboard/my-tenders"
+                        className="mt-1 inline-flex items-center gap-0.5 text-[11px] font-medium underline underline-offset-2"
+                        style={{ color: NAVY }}
+                      >
+                        View <ArrowUpRight className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
+
             <div className="flex-1 space-y-6 p-6">
               <div>
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tendances d&apos;évaluation</h3>
@@ -158,10 +186,14 @@ function AuthorityProfileDrawer({ authority, open, onClose }: {
                 </div>
                 <p className="text-sm text-foreground">{authority.tendroInsight}</p>
               </div>
-              <button type="button" className="inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity" style={{ backgroundColor: NAVY }}>
+              <a
+                href="/dashboard/my-tenders"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: NAVY }}
+              >
                 Voir les appels d&apos;offres ouverts
                 <ExternalLink className="h-4 w-4" />
-              </button>
+              </a>
             </div>
           </div>
         )}
@@ -211,7 +243,7 @@ export default function AuthorityProfilesPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by name, region or authority type..."
-              className="h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm focus:outline-none focus:ring-2"
               style={{ "--tw-ring-color": NAVY } as React.CSSProperties}
             />
           </div>
@@ -222,7 +254,7 @@ export default function AuthorityProfilesPage() {
               { value: sector, onChange: setSector, options: ["Tous les secteurs", "Services généraux", "IT & Numérique", "Santé", "Construction"] },
             ].map((sel, i) => (
               <select key={i} value={sel.value} onChange={(e) => sel.onChange(e.target.value)}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2">
                 {sel.options.map((o) => <option key={o}>{o}</option>)}
               </select>
             ))}
@@ -251,17 +283,19 @@ export default function AuthorityProfilesPage() {
                   </div>
                 </div>
 
-                {/* Stat pills */}
-                <div className="mb-4 flex flex-wrap gap-1.5">
-                  <span className="rounded-full border px-2.5 py-1 text-[11px] font-semibold" style={{ borderColor: `${NAVY}25`, backgroundColor: N05, color: NAVY }}>
-                    {a.lettersAnalysed} letters
-                  </span>
-                  <span className="rounded-full border px-2.5 py-1 text-[11px] font-semibold" style={{ borderColor: `${NAVY}25`, backgroundColor: N05, color: NAVY }}>
-                    {a.companiesReviewed} companies
-                  </span>
-                  <span className="rounded-full border px-2.5 py-1 text-[11px] font-semibold" style={{ borderColor: `${NAVY}25`, backgroundColor: N05, color: NAVY }}>
-                    Since {a.activeSince}
-                  </span>
+                {/* Stat blocks */}
+                <div className="mb-4 grid grid-cols-3 gap-2">
+                  {[
+                    { icon: FileText, value: a.lettersAnalysed,    label: "Letters Analysed"    },
+                    { icon: Users,    value: a.companiesReviewed,   label: "Companies Reviewed"  },
+                    { icon: Calendar, value: `Since ${a.activeSince}`, label: "Active in Tendro" },
+                  ].map(({ icon: Icon, value, label }) => (
+                    <div key={label} className="flex flex-col items-center rounded-lg py-2.5 px-1 text-center" style={{ backgroundColor: N05 }}>
+                      <Icon className="mb-1.5 h-3.5 w-3.5" style={{ color: NAVY }} />
+                      <p className="text-sm font-bold leading-tight tabular-nums" style={{ color: NAVY }}>{value}</p>
+                      <p className="mt-0.5 text-[9px] leading-tight text-muted-foreground">{label}</p>
+                    </div>
+                  ))}
                 </div>
 
                 <button
